@@ -22,4 +22,9 @@ public class SecondController {
 
         return "hello rest api";
     }
+    @GetMapping("/api/notice")
+    public String notice(){
+
+        return "공지사항입니다.";
+    }
 }
