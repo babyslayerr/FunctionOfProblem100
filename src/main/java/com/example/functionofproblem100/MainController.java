@@ -4,12 +4,17 @@ package com.example.functionofproblem100;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 public class MainController {
 
-    @RequestMapping(value = "/hi", method = RequestMethod.GET)
-    public void mainController(){
+
+    @ResponseBody
+    @RequestMapping(value = "/helloworld", method = RequestMethod.GET)
+    public String mainController(){
+
+        return "hello world";
 
     }
 }
