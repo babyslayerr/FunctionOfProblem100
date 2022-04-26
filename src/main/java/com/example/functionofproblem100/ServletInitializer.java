@@ -1,5 +1,6 @@
 package com.example.functionofproblem100;
 
+import com.example.functionofproblem100.FunctionOfProblem100Application;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 

@@ -1,4 +1,4 @@
-package com.example.functionofproblem100;
+package com.example.functionofproblem100.controller;
 
 
 import org.springframework.stereotype.Controller;
