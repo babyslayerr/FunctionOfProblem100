@@ -1,10 +1,7 @@
 package com.example.functionofproblem100;
 
 
-import org.springframework.web.bind.annotation.RequestAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class SecondController {
@@ -12,5 +9,17 @@ public class SecondController {
     @RequestMapping(value = "/hello-spring", method = RequestMethod.GET)
     public String hello_spring(){
         return "hello spring";
+    }
+
+    @GetMapping("/hello-rest")
+    public String helloRest(){
+
+        return "hello rest";
+    }
+
+    @GetMapping("/api/helloworld")
+    public String helloRestApi(){
+
+        return "hello rest api";
     }
 }
