@@ -14,9 +14,16 @@ public class ApiController {
 
 
     @GetMapping("/api/notice")
-    public String notice(){
+    public NoticeModel notice(){
 
-        return "공지사항입니다.";
+        LocalDateTime regDt = LocalDateTime.of(2021,1,30,0,0);
+
+        NoticeModel noticeModel = new NoticeModel();
+        noticeModel.setId(1);
+        noticeModel.setTitle("공지사항입니다.");
+        noticeModel.setContents("공지사항 내용입니다. ");
+        noticeModel.setRegDate(regDt);
+        return noticeModel;
     }
 
     @GetMapping("/api/notice2")
