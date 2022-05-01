@@ -93,4 +93,10 @@ public class ApiController {
 
         return noticeModel;
     }
+//
+//    @PostMapping("/api/notice4")
+//    public NoticeModel addNotice4(@RequestBody NoticeModel noticeModel){
+//
+//    re
+//    }
 }

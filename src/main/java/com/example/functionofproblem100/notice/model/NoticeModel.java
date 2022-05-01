@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @Data
 public class NoticeModel {
 
-    private int id;
+    private long id;
     private String title;
     private String contents;
     private LocalDateTime regDate;
