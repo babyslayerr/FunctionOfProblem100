@@ -2,11 +2,14 @@ package com.example.functionofproblem100.notice.controller;
 
 
 import com.example.functionofproblem100.notice.entity.Notice;
+import com.example.functionofproblem100.notice.exception.NoticeNotFoundException;
 import com.example.functionofproblem100.notice.model.NoticeInput;
 import com.example.functionofproblem100.notice.model.NoticeModel;
 import com.example.functionofproblem100.notice.repository.NoticeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -141,4 +144,36 @@ public class ApiController {
        return null;
 
     }
+
+//    @PutMapping("/api/notice/{id}")
+//    public void updateNotice(@PathVariable Long id ,@RequestBody NoticeInput noticeInput){
+//        Optional<Notice> notice = noticeRepository.findById(id);
+//        if (notice.isPresent()){
+//            notice.get().setTitle(noticeInput.getTitle());
+//            notice.get().setContents(noticeInput.getContents());
+//            notice.get().setUpdateDate(LocalDateTime.now());
+//            noticeRepository.save(notice.get());
+//        }
+//    }
+    @ExceptionHandler(NoticeNotFoundException.class)
+    public ResponseEntity<String> handlerNoticeNotFoundException(NoticeNotFoundException exception){
+        return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @PatchMapping("/api/notice/{id}")
+    public void updateNotice1(@PathVariable Long id, @RequestBody NoticeInput noticeInput){
+
+        Optional<Notice> notice = noticeRepository.findById(id);
+        if(notice.isPresent()) {
+            notice.get().setTitle(noticeInput.getTitle());
+            notice.get().setContents(noticeInput.getContents());
+            notice.get().setUpdateDate(LocalDateTime.now());
+            noticeRepository.save(notice.get());
+        }else{
+            throw new NoticeNotFoundException("공지사항내용이 없습니다.");
+        }
+
+
+    }
+
 }
