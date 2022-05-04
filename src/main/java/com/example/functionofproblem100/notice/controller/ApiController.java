@@ -1,15 +1,25 @@
 package com.example.functionofproblem100.notice.controller;
 
 
+import com.example.functionofproblem100.notice.entity.Notice;
+import com.example.functionofproblem100.notice.model.NoticeInput;
 import com.example.functionofproblem100.notice.model.NoticeModel;
+import com.example.functionofproblem100.notice.repository.NoticeRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
+@RequiredArgsConstructor
 @RestController
 public class ApiController {
+
+    @Autowired
+    private final NoticeRepository noticeRepository;
 
 
 //    @GetMapping("/api/notice3")
@@ -93,10 +103,42 @@ public class ApiController {
 
         return noticeModel;
     }
+    @PostMapping("/api/notice4")
+    public Notice addNotice4(@RequestBody NoticeInput noticeInput){
+
+        Notice notice = Notice.builder()
+                .title(noticeInput.getTitle())
+                .contents(noticeInput.getContents())
+                .regDate(LocalDateTime.now())
+                .build();
 //
-//    @PostMapping("/api/notice4")
-//    public NoticeModel addNotice4(@RequestBody NoticeModel noticeModel){
+        noticeRepository.save(notice);
 //
-//    re
-//    }
+        return notice;
+    }
+
+    @PostMapping("/api/notice5")
+    public Notice addNotice5(@RequestBody NoticeInput noticeInput){
+        Notice notice = Notice.builder()
+                .title(noticeInput.getTitle())
+                .contents(noticeInput.getContents())
+                .regDate(LocalDateTime.now())
+                .build();
+
+//        noticeRepository.save(notice);
+        Notice resultNotice = noticeRepository.save(notice);
+        return resultNotice;
+
+    }
+    @GetMapping("/api/notice/{id}")
+    public Notice notice(@PathVariable Long id){
+
+       Optional<Notice> notice = noticeRepository.findById(id);
+       if(notice.isPresent()){
+            return notice.get();
+       }
+
+       return null;
+
+    }
 }

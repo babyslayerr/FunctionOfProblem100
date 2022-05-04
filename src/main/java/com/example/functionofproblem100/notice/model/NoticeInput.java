@@ -6,18 +6,17 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @Data
-public class NoticeModel {
+public class NoticeInput {
 
-    private long id;
+
     private String title;
     private String contents;
-    private LocalDateTime regDate;
-    private long viewsCount = 0;
-    private long likeCount = 0;
+
 
 
 }
