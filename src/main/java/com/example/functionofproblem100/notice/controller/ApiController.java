@@ -80,7 +80,6 @@ public class ApiController {
     public NoticeModel addNotice(@RequestParam String title, @RequestParam String contents){
 
         NoticeModel noticeModel = NoticeModel.builder()
-                .id(1)
                 .title(title)
                 .contents(contents)
                 .regDate(LocalDateTime.now())
@@ -160,20 +159,39 @@ public class ApiController {
         return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
-    @PatchMapping("/api/notice/{id}")
-    public void updateNotice1(@PathVariable Long id, @RequestBody NoticeInput noticeInput){
+//    @PatchMapping("/api/notice/{id}")
+//    public void updateNotice1(@PathVariable Long id, @RequestBody NoticeInput noticeInput){
+//
+//        Optional<Notice> notice = noticeRepository.findById(id);
+//        if(notice.isPresent()) {
+//            notice.get().setTitle(noticeInput.getTitle());
+//            notice.get().setContents(noticeInput.getContents());
+//            notice.get().setUpdateDate(LocalDateTime.now());
+//            noticeRepository.save(notice.get());
+//        }else{
+//            throw new NoticeNotFoundException("공지사항내용이 없습니다.");
+//        }
+//
+//
+//    }
 
-        Optional<Notice> notice = noticeRepository.findById(id);
-        if(notice.isPresent()) {
-            notice.get().setTitle(noticeInput.getTitle());
-            notice.get().setContents(noticeInput.getContents());
-            notice.get().setUpdateDate(LocalDateTime.now());
-            noticeRepository.save(notice.get());
-        }else{
-            throw new NoticeNotFoundException("공지사항내용이 없습니다.");
-        }
+    @PatchMapping("/api/notice/{id}/likeCount")
+    public void updateLikeCount(@PathVariable Long id){
 
+        Notice notice = noticeRepository.findById(id)
+                .orElseThrow(() -> new NoticeNotFoundException("공지사항 내용이 없습니다."));
 
+        notice.setViewsCount(notice.getViewsCount() + 1);
+        noticeRepository.save(notice);
     }
 
+    @DeleteMapping("/api/notice/{id}")
+    public void deleteNotice(@PathVariable Long id){
+
+        Notice notice = noticeRepository.findById(id)
+                .orElseThrow(() -> new NoticeNotFoundException("공지사항 내용 없다고!!!"));
+
+        noticeRepository.delete(notice);
+
+    }
 }
