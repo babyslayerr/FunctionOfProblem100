@@ -39,4 +39,9 @@ public class Notice {
     @Column
     private long likeCount;
 
+    @Column
+    private boolean deleted = false;
+
+    @Column
+    private LocalDateTime deletedDate;
 }

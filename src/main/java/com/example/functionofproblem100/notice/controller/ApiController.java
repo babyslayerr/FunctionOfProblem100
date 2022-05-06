@@ -2,6 +2,7 @@ package com.example.functionofproblem100.notice.controller;
 
 
 import com.example.functionofproblem100.notice.entity.Notice;
+import com.example.functionofproblem100.notice.exception.AlreadyDeletedException;
 import com.example.functionofproblem100.notice.exception.NoticeNotFoundException;
 import com.example.functionofproblem100.notice.model.NoticeInput;
 import com.example.functionofproblem100.notice.model.NoticeModel;
@@ -63,33 +64,35 @@ public class ApiController {
 //    }
 
     @GetMapping("/api/notice")
-    public List<NoticeModel> notice(){
+    public List<NoticeModel> notice() {
 
         List<NoticeModel> noticeModelList = new ArrayList<>();
 
         return noticeModelList;
 
     }
-//
+
+    //
 //    @GetMapping("/api/notice/count")
 //    public int noticeCount(){
 //
 //        return 20;
 //    }
-    @PostMapping("/api/notice")
-    public NoticeModel addNotice(@RequestParam String title, @RequestParam String contents){
+//    @PostMapping("/api/notice")
+//    public NoticeModel addNotice(@RequestParam String title, @RequestParam String contents) {
+//
+//        NoticeModel noticeModel = NoticeModel.builder()
+//                .title(title)
+//                .contents(contents)
+//                .regDate(LocalDateTime.now())
+//                .build();
 
-        NoticeModel noticeModel = NoticeModel.builder()
-                .title(title)
-                .contents(contents)
-                .regDate(LocalDateTime.now())
-                .build();
+//
+//        return noticeModel;
+//    }
 
-
-        return noticeModel;
-    }
     @PostMapping("/api/notice2")
-    public NoticeModel addNotice2(NoticeModel noticeModel){
+    public NoticeModel addNotice2(NoticeModel noticeModel) {
 
         noticeModel.setId(2);
         noticeModel.setRegDate(LocalDateTime.now());
@@ -98,29 +101,11 @@ public class ApiController {
     }
 
 
-    @PostMapping("/api/notice3")
-    public NoticeModel addNotice3(@RequestBody NoticeModel noticeModel){  //json파일을 받기 위함
-        noticeModel.setId(3);
-        noticeModel.setRegDate(LocalDateTime.now());
 
-        return noticeModel;
-    }
-    @PostMapping("/api/notice4")
-    public Notice addNotice4(@RequestBody NoticeInput noticeInput){
 
-        Notice notice = Notice.builder()
-                .title(noticeInput.getTitle())
-                .contents(noticeInput.getContents())
-                .regDate(LocalDateTime.now())
-                .build();
-//
-        noticeRepository.save(notice);
-//
-        return notice;
-    }
 
     @PostMapping("/api/notice5")
-    public Notice addNotice5(@RequestBody NoticeInput noticeInput){
+    public Notice addNotice5(@RequestBody NoticeInput noticeInput) {
         Notice notice = Notice.builder()
                 .title(noticeInput.getTitle())
                 .contents(noticeInput.getContents())
@@ -132,19 +117,20 @@ public class ApiController {
         return resultNotice;
 
     }
+
     @GetMapping("/api/notice/{id}")
-    public Notice notice(@PathVariable Long id){
+    public Notice notice(@PathVariable Long id) {
 
-       Optional<Notice> notice = noticeRepository.findById(id);
-       if(notice.isPresent()){
+        Optional<Notice> notice = noticeRepository.findById(id);
+        if (notice.isPresent()) {
             return notice.get();
-       }
+        }
 
-       return null;
+        return null;
 
     }
 
-//    @PutMapping("/api/notice/{id}")
+    //    @PutMapping("/api/notice/{id}")
 //    public void updateNotice(@PathVariable Long id ,@RequestBody NoticeInput noticeInput){
 //        Optional<Notice> notice = noticeRepository.findById(id);
 //        if (notice.isPresent()){
@@ -155,7 +141,7 @@ public class ApiController {
 //        }
 //    }
     @ExceptionHandler(NoticeNotFoundException.class)
-    public ResponseEntity<String> handlerNoticeNotFoundException(NoticeNotFoundException exception){
+    public ResponseEntity<String> handlerNoticeNotFoundException(NoticeNotFoundException exception) {
         return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
@@ -176,7 +162,7 @@ public class ApiController {
 //    }
 
     @PatchMapping("/api/notice/{id}/likeCount")
-    public void updateLikeCount(@PathVariable Long id){
+    public void updateLikeCount(@PathVariable Long id) {
 
         Notice notice = noticeRepository.findById(id)
                 .orElseThrow(() -> new NoticeNotFoundException("공지사항 내용이 없습니다."));
@@ -185,13 +171,31 @@ public class ApiController {
         noticeRepository.save(notice);
     }
 
+//    @DeleteMapping("/api/notice/{id}")
+//    public void deleteNotice(@PathVariable Long id) {
+//
+//        Notice notice = noticeRepository.findById(id)
+//                .orElseThrow(() -> new NoticeNotFoundException("공지사항 내용 없다고!!!"));
+//
+//        noticeRepository.delete(notice);
+//
+//    }
+    @ExceptionHandler(AlreadyDeletedException.class)
+    public ResponseEntity<String> handlerAlreadyDeletedException(AlreadyDeletedException exception) {
+        return new ResponseEntity<>(exception.getMessage(), HttpStatus.OK);
+    }
+
     @DeleteMapping("/api/notice/{id}")
     public void deleteNotice(@PathVariable Long id){
 
         Notice notice = noticeRepository.findById(id)
-                .orElseThrow(() -> new NoticeNotFoundException("공지사항 내용 없다고!!!"));
+                .orElseThrow(() -> new NoticeNotFoundException("공지사항 내용이 없습니다."));
 
-        noticeRepository.delete(notice);
-
+        if (notice.isDeleted()){
+            throw new AlreadyDeletedException("이미 삭제되었습니다.");
+        }
+        notice.setDeletedDate(LocalDateTime.now());
+        notice.setDeleted(true);
+        noticeRepository.save(notice);
     }
 }
