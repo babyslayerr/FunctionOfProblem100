@@ -4,6 +4,7 @@ package com.example.functionofproblem100.notice.controller;
 import com.example.functionofproblem100.notice.entity.Notice;
 import com.example.functionofproblem100.notice.exception.AlreadyDeletedException;
 import com.example.functionofproblem100.notice.exception.NoticeNotFoundException;
+import com.example.functionofproblem100.notice.model.NoticeDeleteInput;
 import com.example.functionofproblem100.notice.model.NoticeInput;
 import com.example.functionofproblem100.notice.model.NoticeModel;
 import com.example.functionofproblem100.notice.repository.NoticeRepository;
@@ -197,5 +198,17 @@ public class ApiController {
         notice.setDeletedDate(LocalDateTime.now());
         notice.setDeleted(true);
         noticeRepository.save(notice);
+    }
+    @DeleteMapping("/api/notice/delete")
+    public void deleteOptionNotice(@RequestBody NoticeDeleteInput noticeDeleteInput){
+        List<Notice> noticeList = noticeRepository.findByIdIn(noticeDeleteInput.getIdList())
+                .orElseThrow(()-> new NoticeNotFoundException("공지사항이 없습니다."));
+
+        noticeList.stream().forEach(e->{
+            e.setDeleted(true);
+            e.setDeletedDate(LocalDateTime.now());
+        });
+
+        noticeRepository.saveAll(noticeList);
     }
 }
