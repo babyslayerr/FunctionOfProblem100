@@ -7,13 +7,17 @@ import com.example.functionofproblem100.notice.exception.NoticeNotFoundException
 import com.example.functionofproblem100.notice.model.NoticeDeleteInput;
 import com.example.functionofproblem100.notice.model.NoticeInput;
 import com.example.functionofproblem100.notice.model.NoticeModel;
+import com.example.functionofproblem100.notice.model.ResponseError;
 import com.example.functionofproblem100.notice.repository.NoticeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.Errors;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -92,32 +96,32 @@ public class ApiController {
 //        return noticeModel;
 //    }
 
-    @PostMapping("/api/notice2")
-    public NoticeModel addNotice2(NoticeModel noticeModel) {
-
-        noticeModel.setId(2);
-        noticeModel.setRegDate(LocalDateTime.now());
-
-        return noticeModel;
-    }
-
-
-
-
-
-    @PostMapping("/api/notice5")
-    public Notice addNotice5(@RequestBody NoticeInput noticeInput) {
-        Notice notice = Notice.builder()
-                .title(noticeInput.getTitle())
-                .contents(noticeInput.getContents())
-                .regDate(LocalDateTime.now())
-                .build();
-
-//        noticeRepository.save(notice);
-        Notice resultNotice = noticeRepository.save(notice);
-        return resultNotice;
-
-    }
+//    @PostMapping("/api/notice2")
+//    public NoticeModel addNotice2(NoticeModel noticeModel) {
+//
+//        noticeModel.setId(2);
+//        noticeModel.setRegDate(LocalDateTime.now());
+//
+//        return noticeModel;
+//    }
+//
+//
+//
+//
+//
+//    @PostMapping("/api/notice5")
+//    public Notice addNotice5(@RequestBody NoticeInput noticeInput) {
+//        Notice notice = Notice.builder()
+//                .title(noticeInput.getTitle())
+//                .contents(noticeInput.getContents())
+//                .regDate(LocalDateTime.now())
+//                .build();
+//
+////        noticeRepository.save(notice);
+//        Notice resultNotice = noticeRepository.save(notice);
+//        return resultNotice;
+//
+//    }
 
     @GetMapping("/api/notice/{id}")
     public Notice notice(@PathVariable Long id) {
@@ -210,5 +214,46 @@ public class ApiController {
         });
 
         noticeRepository.saveAll(noticeList);
+    }
+    @DeleteMapping("/api/notice/all")
+    public void deleteAll(){
+        noticeRepository.deleteAll();
+    }
+
+//    @PostMapping("/api/notice")
+//    public void addNotice(@RequestBody NoticeInput noticeInput){
+//        Notice notice = new Notice().builder()
+//                .title(noticeInput.getTitle())
+//                .contents(noticeInput.getContents())
+//                .regDate(LocalDateTime.now())
+//                .viewsCount(0)
+//                .likeCount(0)
+//                .build();
+//
+//        noticeRepository.save(notice);
+//    }
+
+    @PostMapping("/api/notice")
+    public ResponseEntity<Object> addNotice(@RequestBody @Valid NoticeInput noticeInput, Errors errors){
+
+        if(errors.hasErrors()){
+//            return new ResponseEntity<>(errors.getAllErrors(),HttpStatus.BAD_REQUEST);
+
+            List<ResponseError> responseErrors = new ArrayList<>();
+            errors.getAllErrors().stream().forEach(e->{
+                responseErrors.add(ResponseError.of((FieldError) e));
+            });
+            return new ResponseEntity<>(responseErrors,HttpStatus.BAD_REQUEST);
+        }
+
+        noticeRepository.save(Notice.builder()
+                .title(noticeInput.getTitle())
+                .contents(noticeInput.getContents())
+                .regDate(LocalDateTime.now())
+                .viewsCount(0)
+                .likeCount(0)
+                .build());
+
+        return ResponseEntity.ok().build();
     }
 }
