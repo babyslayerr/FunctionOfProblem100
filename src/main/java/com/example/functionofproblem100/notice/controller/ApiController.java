@@ -233,19 +233,40 @@ public class ApiController {
 //        noticeRepository.save(notice);
 //    }
 
+//    @PostMapping("/api/notice")
+//    public ResponseEntity<Object> addNotice(@RequestBody @Valid NoticeInput noticeInput, Errors errors){
+//
+//        if(errors.hasErrors()){
+////            return new ResponseEntity<>(errors.getAllErrors(),HttpStatus.BAD_REQUEST);
+//
+//            List<ResponseError> responseErrors = new ArrayList<>();
+//            errors.getAllErrors().stream().forEach(e->{
+//                responseErrors.add(ResponseError.of((FieldError) e));
+//            });
+//            return new ResponseEntity<>(responseErrors,HttpStatus.BAD_REQUEST);
+//        }
+//
+//        noticeRepository.save(Notice.builder()
+//                .title(noticeInput.getTitle())
+//                .contents(noticeInput.getContents())
+//                .regDate(LocalDateTime.now())
+//                .viewsCount(0)
+//                .likeCount(0)
+//                .build());
+//
+//        return ResponseEntity.ok().build();
+//    }
+
     @PostMapping("/api/notice")
-    public ResponseEntity<Object> addNotice(@RequestBody @Valid NoticeInput noticeInput, Errors errors){
-
+    public ResponseEntity<Object> addNotice(@RequestBody @Valid NoticeInput noticeInput,
+                                            Errors errors){
         if(errors.hasErrors()){
-//            return new ResponseEntity<>(errors.getAllErrors(),HttpStatus.BAD_REQUEST);
-
             List<ResponseError> responseErrors = new ArrayList<>();
             errors.getAllErrors().stream().forEach(e->{
                 responseErrors.add(ResponseError.of((FieldError) e));
             });
             return new ResponseEntity<>(responseErrors,HttpStatus.BAD_REQUEST);
         }
-
         noticeRepository.save(Notice.builder()
                 .title(noticeInput.getTitle())
                 .contents(noticeInput.getContents())
@@ -253,7 +274,7 @@ public class ApiController {
                 .viewsCount(0)
                 .likeCount(0)
                 .build());
-
         return ResponseEntity.ok().build();
+
     }
 }
